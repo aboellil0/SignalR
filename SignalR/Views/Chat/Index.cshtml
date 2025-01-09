@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "index";
+}
+
+
+<h1>
+    Chat App
+</h1>
+name : <input type="text" value="Aboellil" id="name" />
+<br />
+messege : <input type="text" id="messege" />
+<br />
+<input type="button" value="ٍSend To All" id="SendBtn" />
+
+
+<input type="text" value="group name" id="groupname" />
+<input type="button" value="Join" id="joinbtn" />
+<input type="button" value="Send To Group" id="sendgroup" />
+<ul id="messeges" class="d-block mt-5">
+</ul>
+
+
+
+    
+@section Scripts {
+
+    <script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/Chat.js"></script>
+
+}
