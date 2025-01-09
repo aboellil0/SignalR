@@ -40,8 +40,11 @@ namespace SignalR.Hubs
                 //add to group
                 Groups.AddToGroupAsync(Context.ConnectionId, groupname);
 
+                //save in database
+                
+
                 //boadcasting 
-                Clients.OthersInGroup(groupname).SendAsync("groupsend", name, groupname);
+                Clients.Group(groupname).SendAsync("groupsend", name, groupname);
             }
             catch (Exception ex)
             {
@@ -49,9 +52,21 @@ namespace SignalR.Hubs
             }
         }
 
-        public void SendToGroup()
+        [HubMethodName("sendtogroup")]
+        public void SendToGroup(string groupname, string name,string message)
         {
-
+            try
+            {
+                //send to group
+                
+                //
+                Clients.Group(groupname).SendAsync("newgroupmessage", name, message);
+            }
+            catch (Exception ex)
+            {
+                ILogger logger = null;
+                logger.LogInformation($"################Error: {ex.Message}");
+            }
         }
 
         public override Task OnConnectedAsync()
