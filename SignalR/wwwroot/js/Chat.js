@@ -24,7 +24,14 @@ con.on("groupsend", function (name, groupname) {
     $("#messeges").append("<li>" + name + " ::::: " + groupname + "</li>");
 });
 
-
+con.on("getgroupmessages", function (group, name, message) {
+    $("#GroupName").append(group);
+    $("#GroupMess").append("<tr> <td>"+ name +"</td><td>"+ message +"</td> </tr>");
+});
+con.on("newgroupmessage", function (group, name, message) {
+    $("#GroupName").append(group);
+    $("#GroupMess").append("<tr> <td>" + name + "</td><td>" + message + "</td> </tr>");
+});
 
 
 // Function to consume service
@@ -41,7 +48,6 @@ function SendM() {
 function GetAll() {
     con.invoke("GetAll").catch(err => console.error(err.toString()));
 }
-console.log("Script loaded!");
 
 function JoinGroup() {
     var SinderName = $("#name").val();
@@ -51,6 +57,23 @@ function JoinGroup() {
 
     con.invoke("joingroup", GroupName, SinderName);
 }
+function SendToGroup() {
+    var SinderName = $("#name").val();
+    var GroupName = $("#groupname").val();
+    var SinderMessege = $("#messege").val();
+
+    console.log("Joining:", GroupName, "with name:", SinderName);
+    con.invoke("sendtogroup", GroupName, SinderName, SinderMessege);
+}
+
+function GetAllGroupMessages() {
+
+    var GroupName = $("#groupname").val();
+
+    con.invoke("getgroupmessages", GroupName);
+}
+
+
 
 
 $("#SendBtn").on("click", () => {
@@ -69,3 +92,10 @@ $("#joinbtn").on("click", () => {
     JoinGroup();
 });
 
+$("#SendG").on("click", () => {
+    SendToGroup()
+});
+
+$("#GetAllG").on("click", () => {
+    GetAllGroupMessages()
+});

@@ -18,11 +18,17 @@ public partial class SignalRContext : DbContext
     }
 
     public virtual DbSet<Chat> Chats { get; set; }
+    public virtual DbSet<Group> Groups { get; set; }
+    public virtual DbSet<GroupMessage> GroupMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         OnModelCreatingPartial(modelBuilder);
         modelBuilder.Entity<Chat>().HasKey(e => e.Id);
+
+        modelBuilder.Entity<GroupMessage>()
+            .HasOne(m => m.group)
+            .WithMany();
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

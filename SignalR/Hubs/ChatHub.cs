@@ -7,10 +7,12 @@ namespace SignalR.Hubs
     public class ChatHub : Hub
     {
         private readonly SignalRContext _context;
+        private readonly ILogger logger;
 
-        public ChatHub(SignalRContext context)
+        public ChatHub(SignalRContext context,ILogger<ChatHub> logger)
         {
             this._context = context;
+            this.logger = logger;
         }
         [HubMethodName("SendMessege")]
         public void Aboellil(string name, string message)
@@ -41,14 +43,14 @@ namespace SignalR.Hubs
                 Groups.AddToGroupAsync(Context.ConnectionId, groupname);
 
                 //save in database
-                
+                _context.Groups.Add(new Group { GroupName = groupname });
 
                 //boadcasting 
                 Clients.Group(groupname).SendAsync("groupsend", name, groupname);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in JoinToGroup: {ex.Message}");
+                logger.LogInformation($"Error in JoinToGroup: {ex.Message}");
             }
         }
 
@@ -57,18 +59,36 @@ namespace SignalR.Hubs
         {
             try
             {
-                //send to group
-                
-                //
-                Clients.Group(groupname).SendAsync("newgroupmessage", name, message);
+                //Save in DB
+                _context.Groups.FirstOrDefault(e => e.GroupName == groupname)
+                    .Messages.Add(new GroupMessage { SinderName = groupname, Message = message });
+                _context.SaveChanges() ;
+
+                //bopadcasting
+                Clients.Group(groupname).SendAsync("newgroupmessage",groupname, name, message);
             }
             catch (Exception ex)
             {
-                ILogger logger = null;
                 logger.LogInformation($"################Error: {ex.Message}");
             }
         }
 
+        [HubMethodName("getgroupmessages")]
+        public void GetAllGroupMessages(string groupname)
+        {
+            try
+            {
+                var message = _context.Groups.FirstOrDefault(e=>e.GroupName == groupname).Messages.ToList();
+                foreach (var groupMessag in message)
+                {
+                    Clients.Group(groupname).SendAsync("getgroupmessages",groupname,groupMessag.SinderName, groupMessag.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogInformation($"################Error: {ex.Message}");
+            }
+        }
         public override Task OnConnectedAsync()
         {
             string conId = Context.ConnectionId;
