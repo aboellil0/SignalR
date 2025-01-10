@@ -25,11 +25,11 @@ con.on("groupsend", function (name, groupname) {
 });
 
 con.on("getgroupmessages", function (group, name, message) {
-    $("#GroupName").append(group);
+    var GroupName = $("#groupname").val();
+    $("#GroupName").append(GroupName);
     $("#GroupMess").append("<tr> <td>"+ name +"</td><td>"+ message +"</td> </tr>");
 });
 con.on("newgroupmessage", function (group, name, message) {
-    $("#GroupName").append(group);
     $("#GroupMess").append("<tr> <td>" + name + "</td><td>" + message + "</td> </tr>");
 });
 

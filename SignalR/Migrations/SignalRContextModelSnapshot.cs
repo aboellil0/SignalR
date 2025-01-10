@@ -67,9 +67,6 @@ namespace SignalR.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -83,8 +80,6 @@ namespace SignalR.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GroupId");
-
                     b.HasIndex("groupId");
 
                     b.ToTable("GroupMessages");
@@ -92,12 +87,8 @@ namespace SignalR.Migrations
 
             modelBuilder.Entity("SignalR.Models.GroupMessage", b =>
                 {
-                    b.HasOne("SignalR.Models.Group", null)
-                        .WithMany("Messages")
-                        .HasForeignKey("GroupId");
-
                     b.HasOne("SignalR.Models.Group", "group")
-                        .WithMany()
+                        .WithMany("Messages")
                         .HasForeignKey("groupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

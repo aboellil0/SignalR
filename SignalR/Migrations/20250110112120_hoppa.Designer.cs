@@ -11,8 +11,8 @@ using SignalR.Models;
 namespace SignalR.Migrations
 {
     [DbContext(typeof(SignalRContext))]
-    [Migration("20250109175457_addingGroups")]
-    partial class addingGroups
+    [Migration("20250110112120_hoppa")]
+    partial class hoppa
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,17 +57,51 @@ namespace SignalR.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasKey("Id");
+
+                    b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("SignalR.Models.GroupMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SenderName")
+                    b.Property<string>("SinderName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("groupId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Groups");
+                    b.HasIndex("groupId");
+
+                    b.ToTable("GroupMessages");
+                });
+
+            modelBuilder.Entity("SignalR.Models.GroupMessage", b =>
+                {
+                    b.HasOne("SignalR.Models.Group", "group")
+                        .WithMany("Messages")
+                        .HasForeignKey("groupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("group");
+                });
+
+            modelBuilder.Entity("SignalR.Models.Group", b =>
+                {
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

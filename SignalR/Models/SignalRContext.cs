@@ -28,7 +28,8 @@ public partial class SignalRContext : DbContext
 
         modelBuilder.Entity<GroupMessage>()
             .HasOne(m => m.group)
-            .WithMany();
+            .WithMany(e => e.Messages)
+            .HasForeignKey(m => m.groupId);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

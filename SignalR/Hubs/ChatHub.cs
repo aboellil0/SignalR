@@ -44,6 +44,7 @@ namespace SignalR.Hubs
 
                 //save in database
                 _context.Groups.Add(new Group { GroupName = groupname });
+                _context.SaveChanges();
 
                 //boadcasting 
                 Clients.Group(groupname).SendAsync("groupsend", name, groupname);
@@ -60,8 +61,8 @@ namespace SignalR.Hubs
             try
             {
                 //Save in DB
-                _context.Groups.FirstOrDefault(e => e.GroupName == groupname)
-                    .Messages.Add(new GroupMessage { SinderName = groupname, Message = message });
+                var groupId = _context.Groups.FirstOrDefault(g => g.GroupName == groupname).Id;
+                _context.GroupMessages.Add(new GroupMessage { SinderName = name, Message = message,groupId = groupId });
                 _context.SaveChanges() ;
 
                 //bopadcasting
@@ -78,8 +79,9 @@ namespace SignalR.Hubs
         {
             try
             {
-                var message = _context.Groups.FirstOrDefault(e=>e.GroupName == groupname).Messages.ToList();
-                foreach (var groupMessag in message)
+                var groupid = _context.Groups.FirstOrDefault(e=>e.GroupName == groupname).Id;
+                var messages = _context.GroupMessages.Where(e=>e.groupId == groupid).ToList();
+                foreach (var groupMessag in messages)
                 {
                     Clients.Group(groupname).SendAsync("getgroupmessages",groupname,groupMessag.SinderName, groupMessag.Message);
                 }

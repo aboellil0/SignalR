@@ -9,5 +9,6 @@ namespace SignalR.Models
         public string Message { get; set; }
         [Required]
         public Group group { get; set; }
+        public int groupId { get; set; }
     }
 }
